@@ -9,8 +9,8 @@ import org.springframework.context.annotation.PropertySource;
 @Data
 @PropertySource("classpath:application.properties")
 public class TgBotConfig {
-    @Value("${bot.name}")
+    @Value("${tgBot.name}")
     String botName;
-    @Value("${bot.token}")
+    @Value("${tgBot.token}")
     String token;
 }
