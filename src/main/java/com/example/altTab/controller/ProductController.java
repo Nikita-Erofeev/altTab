@@ -1,7 +1,9 @@
 package com.example.altTab.controller;
 
-import com.example.altTab.model.Product;
+import com.example.altTab.model.product.Product;
+import com.example.altTab.model.product.Property;
 import com.example.altTab.service.ProductService;
+import com.example.altTab.service.PropertyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,10 +17,12 @@ import java.util.List;
 @Slf4j
 public class ProductController {
 
-    private ProductService productService;
+    private final ProductService productService;
+    private final PropertyService propertyService;
     @Autowired
-    public ProductController(ProductService productService){
+    public ProductController(ProductService productService, PropertyService propertyService){
         this.productService = productService;
+        this.propertyService = propertyService;
     }
 
     @GetMapping("/hello")
@@ -34,6 +38,12 @@ public class ProductController {
     @GetMapping("/product={id}")
     public ResponseEntity<Product> getProductById(@PathVariable("id") Long id){
         return new ResponseEntity<>(productService.getProductById(id), HttpStatus.OK) ;
+    }
+
+    @GetMapping("/product={id}/props")
+    public ResponseEntity<List<Property>> getAllPropertiesByProductId(@PathVariable("id") Long id){
+//        return new ResponseEntity<>(productService.getProductById(id).getPropertyList(), HttpStatus.OK);
+        return null;
     }
 
     @PostMapping("/saveProduct")

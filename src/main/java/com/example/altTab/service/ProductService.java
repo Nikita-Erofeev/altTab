@@ -1,6 +1,6 @@
 package com.example.altTab.service;
 
-import com.example.altTab.model.Product;
+import com.example.altTab.model.product.Product;
 
 import java.util.List;
 
