@@ -1,7 +1,7 @@
 package com.example.altTab.service.impl;
 
+import com.example.altTab.jparepository.PropertyRepository;
 import com.example.altTab.model.product.Property;
-import com.example.altTab.repository.PropertyRepository;
 import com.example.altTab.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

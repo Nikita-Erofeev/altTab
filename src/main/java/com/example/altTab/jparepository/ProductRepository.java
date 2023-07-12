@@ -1,4 +1,4 @@
-package com.example.altTab.repository;
+package com.example.altTab.jparepository;
 
 import com.example.altTab.model.product.Product;
 import org.springframework.data.jpa.repository.JpaRepository;

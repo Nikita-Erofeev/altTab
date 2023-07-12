@@ -1,6 +1,7 @@
 package com.example.altTab.service;
 
 import com.example.altTab.model.product.Product;
+import com.example.altTab.model.product.ProductPropertyValue;
 
 import java.util.List;
 
@@ -11,4 +12,6 @@ public interface ProductService {
 
     Product updateProduct(Product product, Long id);
     void deleteProductById(Long id);
+//test
+    List<ProductPropertyValue> getAllPropertiesByProductId(Long id);
 }

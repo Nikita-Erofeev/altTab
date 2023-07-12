@@ -1,7 +1,7 @@
 package com.example.altTab.controller;
 
 import com.example.altTab.model.product.Product;
-import com.example.altTab.model.product.Property;
+import com.example.altTab.model.product.ProductPropertyValue;
 import com.example.altTab.service.ProductService;
 import com.example.altTab.service.PropertyService;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/product")
 @Slf4j
 public class ProductController {
 
@@ -25,38 +25,35 @@ public class ProductController {
         this.propertyService = propertyService;
     }
 
-    @GetMapping("/hello")
-    public String greeting(@RequestParam(value="name", defaultValue = "World") String name){
-        return "Hello, " + name;
-    }
-
-    @GetMapping("/allProducts")
+    @GetMapping("")
     public List<Product> getAllProducts(){
         return productService.getAllProductsNotHidden();
     }
 
-    @GetMapping("/product={id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable("id") Long id){
         return new ResponseEntity<>(productService.getProductById(id), HttpStatus.OK) ;
     }
 
-    @GetMapping("/product={id}/props")
-    public ResponseEntity<List<Property>> getAllPropertiesByProductId(@PathVariable("id") Long id){
-//        return new ResponseEntity<>(productService.getProductById(id).getPropertyList(), HttpStatus.OK);
-        return null;
+    @GetMapping("/{id}/props")
+    public ResponseEntity<List<ProductPropertyValue>> getAllPropertiesByProductId(@PathVariable("id") Long id){
+        return new ResponseEntity<>(productService.getAllPropertiesByProductId(id), HttpStatus.OK);
     }
 
-    @PostMapping("/saveProduct")
+
+    @PostMapping("/save")
     public ResponseEntity<Product> saveProduct(@RequestBody Product product){
-        log.info("/saveProduct " + product.toString());
+        log.info("/save " + product.toString());
         return new ResponseEntity<>(productService.saveProduct(product), HttpStatus.CREATED);
     }
-    @PutMapping("/product={id}")
+
+    @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@RequestBody Product product,
                                                  @PathVariable("id") Long id){
         return new ResponseEntity<>(productService.updateProduct(product, id), HttpStatus.OK);
     }
-    @DeleteMapping("product={id}")
+
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProductById(@PathVariable("id")Long id){
         productService.deleteProductById(id);
         return new ResponseEntity<>(String.format("Product with id= %d deleted successfully",id), HttpStatus.OK);

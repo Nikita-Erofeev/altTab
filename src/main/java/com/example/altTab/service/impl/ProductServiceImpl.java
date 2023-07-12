@@ -1,8 +1,9 @@
 package com.example.altTab.service.impl;
 
 import com.example.altTab.exception.ResourceNotFoundException;
+import com.example.altTab.jparepository.ProductRepository;
 import com.example.altTab.model.product.Product;
-import com.example.altTab.repository.ProductRepository;
+import com.example.altTab.model.product.ProductPropertyValue;
 import com.example.altTab.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,5 +56,10 @@ public class ProductServiceImpl implements ProductService {
                 ()-> new ResourceNotFoundException("Product ","id", id.toString())
         );
         repository.deleteById(id);
+    }
+
+    @Override
+    public List<ProductPropertyValue> getAllPropertiesByProductId(Long id){
+        return getProductById(id).getProperties();
     }
 }
