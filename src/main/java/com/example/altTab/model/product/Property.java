@@ -1,6 +1,8 @@
 package com.example.altTab.model.product;
 
+import com.example.altTab.model.jsonviews.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +19,19 @@ import java.util.Objects;
 @Entity
 @Table(name = "c_property")
 public class Property {
+    @JsonView(Views.PublicExtended.class)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long propertyId;
+
+    @JsonView(Views.PublicExtended.class)
     @Column(name = "name", nullable = false)
     private String name;
+
+    @JsonView({Views.Internal.class})
+    @Column(name = "is_hidden")
+    private boolean hidden;
 
 //    @Column(name = "property_value", table = "ref_product_property")
 //    private String value;

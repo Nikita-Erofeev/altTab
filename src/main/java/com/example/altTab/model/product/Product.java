@@ -1,6 +1,8 @@
 package com.example.altTab.model.product;
 
+import com.example.altTab.model.jsonviews.Views;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,16 +20,30 @@ import java.util.Objects;
 @Entity
 @Table(name = "product")
 public class Product {
+    @JsonView(Views.Public.class)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @JsonView(Views.Public.class)
     @Column(name = "name", nullable = false)
     private String name;
+
+    @JsonView(Views.Public.class)
     @Column(name = "price", nullable = false)
     private int price;
+
+    @JsonView(Views.Public.class)
     private String discount;
+
+    @JsonView(Views.Public.class)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime discount_time;
+
+    @JsonView(Views.Internal.class)
+    private int current_amount;
+
+    @JsonView(Views.Internal.class)
     private Boolean is_hidden;
 
 //    @ManyToMany(fetch = FetchType.LAZY,
@@ -39,7 +55,8 @@ public class Product {
 //        inverseJoinColumns = {@JoinColumn(name = "property_id")})
 //    private List<Property> propertyList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    @JsonView(Views.PublicExtended.class)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<ProductPropertyValue> properties;
 

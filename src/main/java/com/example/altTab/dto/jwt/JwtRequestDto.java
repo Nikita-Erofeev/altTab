@@ -1,4 +1,4 @@
-package com.example.altTab.dto;
+package com.example.altTab.dto.jwt;
 
 import lombok.Data;
 

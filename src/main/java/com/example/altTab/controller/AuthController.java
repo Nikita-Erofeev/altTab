@@ -1,7 +1,7 @@
 package com.example.altTab.controller;
 
-import com.example.altTab.dto.JwtRequestDto;
-import com.example.altTab.dto.JwtResponseDto;
+import com.example.altTab.dto.jwt.JwtRequestDto;
+import com.example.altTab.dto.jwt.JwtResponseDto;
 import com.example.altTab.exception.BaseException;
 import com.example.altTab.security.JwtTokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;

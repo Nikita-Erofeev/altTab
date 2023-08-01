@@ -14,4 +14,6 @@ public interface ProductService {
     void deleteProductById(Long id);
 //test
     List<ProductPropertyValue> getAllPropertiesByProductId(Long id);
+
+    void addPropertiesToProduct(Long id, List<ProductPropertyValue> productPropertyValues);
 }

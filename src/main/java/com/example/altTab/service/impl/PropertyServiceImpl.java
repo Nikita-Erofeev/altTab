@@ -1,6 +1,7 @@
 package com.example.altTab.service.impl;
 
 import com.example.altTab.jparepository.PropertyRepository;
+import com.example.altTab.model.product.ProductPropertyValue;
 import com.example.altTab.model.product.Property;
 import com.example.altTab.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,7 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
-    public List<Property> getAllPropertiesByProductId(Long id) {
-//        return repository.getAllPropertiesByProductId(productId);
-        return null;
+    public List<Property> getPropertiesNamedLike(String propertyName) {
+        return repository.getPropertiesNamedLike("%" + propertyName + "%");
     }
-
 }
