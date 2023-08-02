@@ -30,6 +30,10 @@ public class Product {
     private String name;
 
     @JsonView(Views.Public.class)
+    @Column(name = "picture_uri")
+    private String picturePath;
+
+    @JsonView(Views.Public.class)
     @Column(name = "price", nullable = false)
     private int price;
 
@@ -38,38 +42,40 @@ public class Product {
 
     @JsonView(Views.Public.class)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime discount_time;
+    @Column(name = "discount_time", nullable = true)
+    private LocalDateTime discountTime;
 
     @JsonView(Views.Internal.class)
-    private int current_amount;
+    @Column(name = "current_amount", nullable = false)
+    private int currentAmount;
 
     @JsonView(Views.Internal.class)
-    private Boolean is_hidden;
-
-//    @ManyToMany(fetch = FetchType.LAZY,
-//        cascade = {
-//            CascadeType.PERSIST, CascadeType.MERGE
-//        })
-//    @JoinTable(name = "ref_product_property",
-//        joinColumns = {@JoinColumn(name = "product_id")},
-//        inverseJoinColumns = {@JoinColumn(name = "property_id")})
-//    private List<Property> propertyList = new ArrayList<>();
+    @Column(name = "is_hidden", nullable = false)
+    private Boolean hidden = false;
 
     @JsonView(Views.PublicExtended.class)
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private List<ProductPropertyValue> properties;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(
+            name = "ref_product_property",
+            joinColumns = {@JoinColumn(name = "product_id")},
+            inverseJoinColumns = {@JoinColumn(name = "property_id")}
+    )
+    private List<Property> properties;
+
+    public boolean isValid(){
+        return name != null && name.length() > 4 && hidden != null;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return id == product.id && price == product.price && Objects.equals(name, product.name);
+        return price == product.price && currentAmount == product.currentAmount && Objects.equals(name, product.name) && Objects.equals(picturePath, product.picturePath) && Objects.equals(discount, product.discount) && Objects.equals(discountTime, product.discountTime) && Objects.equals(hidden, product.hidden) && Objects.equals(properties, product.properties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, price);
+        return Objects.hash(name, picturePath, price, discount, discountTime, currentAmount, hidden, properties);
     }
 }

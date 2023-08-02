@@ -2,16 +2,13 @@ package com.example.altTab.controller;
 
 import com.example.altTab.model.jsonviews.Views;
 import com.example.altTab.model.product.Product;
-import com.example.altTab.model.product.ProductPropertyValue;
 import com.example.altTab.model.product.Property;
 import com.example.altTab.service.ProductService;
-import com.example.altTab.service.PropertyService;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,14 +18,11 @@ import java.util.List;
 @Slf4j
 public class ProductController {
 
-//    TODO определить, что делать с передачей null
-
     private final ProductService productService;
-    private final PropertyService propertyService;
+
     @Autowired
-    public ProductController(ProductService productService, PropertyService propertyService){
+    public ProductController(ProductService productService){
         this.productService = productService;
-        this.propertyService = propertyService;
     }
 
     @JsonView(Views.Public.class) // без характеристик
@@ -43,17 +37,8 @@ public class ProductController {
         return new ResponseEntity<>(productService.getProductById(id), HttpStatus.OK) ;
     }
 
-    @JsonView(Views.PublicExtended.class)
-    @PostMapping("/{id}/addProps")
-    public ResponseEntity<Product> addPropertiesToProduct(@PathVariable("id") Long productId,
-                                                          @RequestBody List<ProductPropertyValue> productPropertyValues){
-        productService.addPropertiesToProduct(productId, productPropertyValues);
-        //        а если исключение?
-        return new ResponseEntity<>(productService.getProductById(productId), HttpStatus.OK);
-    }
-
     @GetMapping("/{id}/props")
-    public ResponseEntity<List<ProductPropertyValue>> getAllPropertiesByProductId(@PathVariable("id") Long id){
+    public ResponseEntity<List<Property>> getAllPropertiesByProductId(@PathVariable("id") Long id){
         return new ResponseEntity<>(productService.getAllPropertiesByProductId(id), HttpStatus.OK);
     }
 
@@ -61,7 +46,7 @@ public class ProductController {
 //    todo переместить
     @GetMapping("/admin/props/{name}")
     public ResponseEntity<List<Property>> getPropertiesNamedLike(@PathVariable("name") String propertyName){
-        return new ResponseEntity<>(propertyService.getPropertiesNamedLike(propertyName), HttpStatus.OK);
+        return new ResponseEntity<>(productService.getPropertiesNamedLike(propertyName), HttpStatus.OK);
     }
 
     @JsonView(Views.PublicExtended.class)

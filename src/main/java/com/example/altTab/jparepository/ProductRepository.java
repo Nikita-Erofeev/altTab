@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    @Query("select p from Product p where p.is_hidden = false")
+    @Query("select p from Product p where p.hidden = false")
     List<Product> getAllProductsNotHidden();
 }

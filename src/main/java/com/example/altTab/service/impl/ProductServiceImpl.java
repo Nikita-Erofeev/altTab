@@ -1,104 +1,89 @@
 package com.example.altTab.service.impl;
 
+import com.example.altTab.dao.product.ProductDao;
 import com.example.altTab.exception.BadRequestException;
-import com.example.altTab.exception.ResourceNotFoundException;
-import com.example.altTab.jparepository.ProductRepository;
-import com.example.altTab.jparepository.PropertyRepository;
 import com.example.altTab.model.product.Product;
-import com.example.altTab.model.product.ProductPropertyValue;
+import com.example.altTab.model.product.Property;
 import com.example.altTab.service.ProductService;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductRepository productRepository;
-    private final PropertyRepository propertyRepository;
-    private final EntityManager entityManager;
+    private final ProductDao productDao;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, PropertyRepository propertyRepository, EntityManager entityManager){
-        this.productRepository = productRepository;
-        this.propertyRepository = propertyRepository;
-        this.entityManager = entityManager;
+    public ProductServiceImpl(ProductDao productDao){
+        this.productDao = productDao;
     }
 
-
-//    Не изменяет характеристики продукта
+    @Transactional
     @Override
     public Product saveProduct(Product product){
-        try {
-            return productRepository.save(product);
-        } catch (Exception e) {
-            throw new BadRequestException("A product with that name is already exists");
+        if(!product.isValid()){
+            throw new BadRequestException("Product is not valid");
         }
+        product.setId(0);
+        //        Сохраняем сначала продукт, потом его характеристики вместе с ним
+        List<Property> properties = product.getProperties();
+        if(properties == null || properties.size() == 0){
+            return productDao.saveProduct(product);
+        }
+        product.setProperties(null);
+        Product result = productDao.saveProduct(product);
+//        Оставляем только валидные характеристики
+        properties = properties.stream().filter(Property::isValid).collect(Collectors.toList());
+        if(properties.size() > 0){
+            result.setProperties(properties);
+            productDao.saveProduct(product);
+        }
+        return result;
     }
 
     @Override
     public List<Product> getAllProductsNotHidden() {
-        return productRepository.getAllProductsNotHidden();
+        return productDao.getAllProductsNotHidden();
     }
 
     @Override
     public Product getProductById(Long id) {
-        return productRepository.findById(id)
-                .orElseThrow(
-                        ()->new ResourceNotFoundException("Product ","id", id.toString())
-                );
+        if(id < 0){
+            throw new BadRequestException("Bad product id");
+        }
+        return productDao.getProductById(id);
 
     }
 
     @Override
     public Product updateProduct(Product product, Long id) {
-//        Проверяем, существует ли продукт с таким id
-        Product existingProduct = productRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("Product ","id", id.toString())
-        );
-        product.setId(id);
-        productRepository.save(product);
-        return product;
+        if(id < 0 || !product.isValid()){
+            throw new BadRequestException("Bad request");
+        }
+        return productDao.updateProduct(product, id);
     }
 
     @Override
     public void deleteProductById(Long id) {
-       productRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("Product ","id", id.toString())
-        );
-        productRepository.deleteById(id);
+        if(id < 0){
+            throw new BadRequestException("Bad product id");
+        }
+        productDao.deleteProductById(id);
     }
 
     @Override
-    public List<ProductPropertyValue> getAllPropertiesByProductId(Long id){
+    public List<Property> getAllPropertiesByProductId(Long id){
         return getProductById(id).getProperties();
     }
 
-    @Transactional
     @Override
-    public void addPropertiesToProduct(Long id, List<ProductPropertyValue> productPropertyValues) {
-//        If the product doesn't exist
-        Product product = productRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("Product ","id", id.toString())
-        );
-//        except properties that the product already has
-//        productPropertyValues = productPropertyValues.stream()
-//                .filter(pr ->  !product.getProperties().contains(pr))
-//                .collect(Collectors.toList());
-//        product.getProperties().addAll(productPropertyValues);
-//        try {
-//            productRepository.save(product);
-//        } catch (Exception e){
-//            throw new BadRequestException("Can't save props");
-//        }
-        for (ProductPropertyValue ppv: productPropertyValues) {
-            ppv.setProduct(product);
-        }
-        product.getProperties().addAll(productPropertyValues);
-        product.getProperties().forEach(entityManager::persist);
-        entityManager.persist(product);
+    public List<Property> getPropertiesNamedLike(String propertyName) {
+        return productDao.getPropertiesNamedLike("%" + propertyName + "%");
     }
+
+
 }

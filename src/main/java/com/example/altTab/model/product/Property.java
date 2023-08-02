@@ -17,46 +17,45 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "c_property")
+@Table(name = "property")
 public class Property {
     @JsonView(Views.PublicExtended.class)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long propertyId;
+    private long id;
 
     @JsonView(Views.PublicExtended.class)
     @Column(name = "name", nullable = false)
     private String name;
 
+    @JsonView(Views.PublicExtended.class)
+    @Column(name = "value", nullable = false)
+    private String value;
+
     @JsonView({Views.Internal.class})
     @Column(name = "is_hidden")
     private boolean hidden;
 
-//    @Column(name = "property_value", table = "ref_product_property")
-//    private String value;
-
-//    @ManyToMany(fetch = FetchType.LAZY,
-//        cascade = {
-//            CascadeType.PERSIST, CascadeType.MERGE
-//        }, mappedBy = "propertyList")
-//    @JsonIgnore
-//    @ToString.Exclude
-//    private List<Product> productList = new ArrayList<>();
     @JsonIgnore
-    @OneToMany(mappedBy = "property", fetch = FetchType.LAZY)
-    private List<ProductPropertyValue> properties;
+    @ManyToMany(mappedBy = "properties")
+    @ToString.Exclude
+    private List<Product> products;
+
+    public boolean isValid(){
+        return name != null && name.length() > 4 && value != null && !value.equals("");
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Property property = (Property) o;
-        return propertyId == property.propertyId && Objects.equals(name, property.name);
+        return hidden == property.hidden && Objects.equals(name, property.name) && Objects.equals(products, property.products);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(propertyId, name);
+        return Objects.hash(name, hidden, products);
     }
 }
