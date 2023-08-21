@@ -19,4 +19,6 @@ public interface ProductDao {
 
     List<Property> getPropertiesNamedLike(String propertyName);
 
+    List<Property> getAllProperties();
+
 }

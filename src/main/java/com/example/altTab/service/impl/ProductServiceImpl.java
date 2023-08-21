@@ -61,7 +61,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product updateProduct(Product product, Long id) {
-        if(id < 0 || !product.isValid()){
+        if(id < 1 || !product.isValid()){
             throw new BadRequestException("Bad request");
         }
         return productDao.updateProduct(product, id);
@@ -78,6 +78,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Property> getAllPropertiesByProductId(Long id){
         return getProductById(id).getProperties();
+    }
+
+    @Override
+    public List<Property> getAllProperties() {
+        return productDao.getAllProperties();
     }
 
     @Override

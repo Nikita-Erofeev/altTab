@@ -45,7 +45,7 @@ public class Product {
     @Column(name = "discount_time", nullable = true)
     private LocalDateTime discountTime;
 
-    @JsonView(Views.Internal.class)
+    @JsonView(Views.Public.class)
     @Column(name = "current_amount", nullable = false)
     private int currentAmount;
 
@@ -54,7 +54,7 @@ public class Product {
     private Boolean hidden = false;
 
     @JsonView(Views.PublicExtended.class)
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "ref_product_property",
             joinColumns = {@JoinColumn(name = "product_id")},
@@ -63,7 +63,7 @@ public class Product {
     private List<Property> properties;
 
     public boolean isValid(){
-        return name != null && name.length() > 4 && hidden != null;
+        return !(name == null || name.length() <= 4 || hidden == null);
     }
 
     @Override

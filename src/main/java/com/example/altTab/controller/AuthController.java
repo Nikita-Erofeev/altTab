@@ -2,10 +2,9 @@ package com.example.altTab.controller;
 
 import com.example.altTab.dto.jwt.JwtRequestDto;
 import com.example.altTab.dto.jwt.JwtResponseDto;
-import com.example.altTab.exception.BaseException;
+import com.example.altTab.exception.AuthException;
 import com.example.altTab.security.JwtTokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -56,9 +55,7 @@ public class AuthController {
                 throw new UsernameNotFoundException("Wrong password");
             }
         } catch (UsernameNotFoundException e){
-            return new ResponseEntity<>(
-                    new BaseException(HttpStatus.UNAUTHORIZED.value(), "Wrong login or password"),HttpStatus.UNAUTHORIZED
-            );
+            throw new AuthException("Wrong login or password");
         }
 
 
@@ -66,7 +63,7 @@ public class AuthController {
 
     }
 
-// TODO сохранение токина в header ответа. Подумать, как лучше
+// TODO сохранение токина в header ответа? Подумать, как лучше
     /*@Override
     public void saveToken(CsrfToken token, HttpServletRequest request, HttpServletResponse response) {
         if (Objects.nonNull(token)) {

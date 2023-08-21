@@ -42,6 +42,7 @@ public class Property {
     @ToString.Exclude
     private List<Product> products;
 
+    @JsonIgnore
     public boolean isValid(){
         return name != null && name.length() > 4 && value != null && !value.equals("");
     }

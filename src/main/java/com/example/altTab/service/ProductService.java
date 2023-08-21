@@ -13,6 +13,8 @@ public interface ProductService {
     void deleteProductById(Long id);
     List<Property> getAllPropertiesByProductId(Long id);
 
+    List<Property> getAllProperties();
+
     List<Property> getPropertiesNamedLike(String propertyName);
 
 }

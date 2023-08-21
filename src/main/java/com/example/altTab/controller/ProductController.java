@@ -42,13 +42,19 @@ public class ProductController {
         return new ResponseEntity<>(productService.getAllPropertiesByProductId(id), HttpStatus.OK);
     }
 
+    @GetMapping("/props")
+    public ResponseEntity<List<Property>> getAllProperties(){
+        return new ResponseEntity<>(productService.getAllProperties(), HttpStatus.OK);
+    }
+
 //    для админа, чтобы можно было управлять списком характеристик
 //    todo переместить
-    @GetMapping("/admin/props/{name}")
+    @GetMapping("/props/{name}")
     public ResponseEntity<List<Property>> getPropertiesNamedLike(@PathVariable("name") String propertyName){
         return new ResponseEntity<>(productService.getPropertiesNamedLike(propertyName), HttpStatus.OK);
     }
 
+//    todo переместить
     @JsonView(Views.PublicExtended.class)
     @PostMapping("/save")
     public ResponseEntity<Product> saveProduct(@RequestBody Product product){
@@ -56,6 +62,7 @@ public class ProductController {
         return new ResponseEntity<>(productService.saveProduct(product), HttpStatus.CREATED);
     }
 
+//    todo переместить
     @JsonView(Views.PublicExtended.class)
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@RequestBody Product product,
@@ -63,11 +70,14 @@ public class ProductController {
         return new ResponseEntity<>(productService.updateProduct(product, id), HttpStatus.OK);
     }
 
+//    todo переместить
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProductById(@PathVariable("id")Long id){
         productService.deleteProductById(id);
         return new ResponseEntity<>(String.format("Product with id= %d deleted successfully",id), HttpStatus.OK);
     }
+
+
 
 
 

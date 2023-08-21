@@ -1,8 +1,11 @@
 package com.example.altTab.config;
 
+import com.example.altTab.exception.AuthException;
+import com.example.altTab.exception.ExceptionApiHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -39,7 +42,7 @@ public class SecurityConfiguration {
         UserDetails admin = User
                 .withUsername("admin")
                 .password(passwordEncoder().encode("adminpass"))
-                .roles("ADMIN")
+                .roles("ADMIN","MANAGER")
                 .build();
         return new InMemoryUserDetailsManager(admin);
     }
@@ -55,11 +58,14 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests( auth -> {
-                    auth.requestMatchers("api/product/save").hasRole("ADMIN")
+                    auth.requestMatchers("api/product/save").hasRole("MANAGER")
+                            .requestMatchers(HttpMethod.PUT).hasRole("MANAGER")
+                            .requestMatchers(HttpMethod.DELETE).hasRole("MANAGER")
                             .anyRequest().permitAll();
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+//                todo all exceptions is becoming 401
+//                .exceptionHandling(exception -> exception.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); //наш фильтр перед этим
 
         return http.build();
